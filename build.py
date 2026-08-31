@@ -15,6 +15,20 @@ from progetti import STRATI
 
 RADICE = pathlib.Path(__file__).parent
 UTENTE = "enzococca"
+EMAIL = "enzo.ccc@gmail.com"
+
+# I quattro numeri dell'apertura: (valore_it, valore_en, etichetta_it, etichetta_en).
+# Sono controllati a mano — se li cambi, controlla che siano ancora veri.
+#   2.146  commit su pyarchinit/pyarchinit (primo contributore, agosto 2026)
+#   133    repository pubblici sul profilo
+#   2013   iscritto a GitHub il 4 febbraio
+#   18+    repository con un metadata.txt di plugin, esclusi doppioni e versioni vecchie
+NUMERI = [
+    ("2.146", "2,146", "commit su pyArchInit", "commits on pyArchInit"),
+    ("133", "133", "repository pubblici", "public repositories"),
+    ("2013", "2013", "su GitHub dal", "on GitHub since"),
+    ("18+", "18+", "plugin QGIS e QField", "QGIS and QField plugins"),
+]
 
 
 def e(t):
@@ -137,6 +151,14 @@ def strato(s):
 {schede}
       </div>
     </section>"""
+
+
+def numeri():
+    voci = []
+    for v_it, v_en, et_it, et_en in NUMERI:
+        valore = e(v_it) if v_it == v_en else due_lingue(e(v_it), e(v_en))
+        voci.append(f"<li><b>{valore}</b><span>{due_lingue(e(et_it), e(et_en))}</span></li>")
+    return "\n      ".join(voci)
 
 
 def indice():
@@ -468,10 +490,7 @@ def costruisci():
       "All of it open or self-hosted: excavation data stays with the people who dig it.",
       tag="p", cls="sommario")}
     <ul class="numeri">
-      <li><b>{due_lingue("2.146", "2,146")}</b><span>{due_lingue("commit su pyArchInit", "commits on pyArchInit")}</span></li>
-      <li><b>130+</b><span>{due_lingue("repository pubblici", "public repositories")}</span></li>
-      <li><b>2013</b><span>{due_lingue("su GitHub dal", "on GitHub since")}</span></li>
-      <li><b>5</b><span>{due_lingue("piattaforme", "platforms")}</span></li>
+      {numeri()}
     </ul>
   </div>
 </header>
@@ -493,15 +512,16 @@ def costruisci():
     <h2>{due_lingue("Parliamone", "Get in touch")}</h2>
     {due_lingue(
       "Se uno di questi strumenti ti serve, se vuoi contribuire o se hai uno scavo da "
-      "documentare e non sai da che parte cominciare, apri una issue sul repository che ti "
-      "interessa o scrivimi su GitHub: quasi tutto quello che c'è qui è nato da una richiesta "
-      "arrivata dal campo.",
+      "documentare e non sai da che parte cominciare, scrivimi: quasi tutto quello che c'è qui "
+      "è nato da una richiesta arrivata dal campo. Per i problemi su un progetto preciso "
+      "conviene aprire una issue sul suo repository, così la discussione resta dov'è utile.",
       "If one of these tools would help you, if you want to contribute, or if you have an "
-      "excavation to record and no idea where to start, open an issue on the repository you "
-      "care about or reach me on GitHub: nearly everything here started as a request that came "
-      "in from the field.",
+      "excavation to record and no idea where to start, write to me: nearly everything here "
+      "started as a request that came in from the field. For a problem with one particular "
+      "project an issue on its repository works better — the discussion stays where it helps.",
       tag="p")}
     <div class="collegamenti">
+      <a href="mailto:{EMAIL}">{EMAIL}</a>
       <a href="https://github.com/{UTENTE}">github.com/{UTENTE}</a>
       <a href="https://github.com/pyarchinit/pyarchinit">pyArchInit</a>
       <a href="https://{UTENTE}.github.io/photo3d-guida">{due_lingue("Guida Photo3D", "Photo3D guide")}</a>
