@@ -79,6 +79,15 @@ TRADUZIONE_TAG = {
     "multilingua": "multilingual",
     "agenti": "agents",
     "ricerca semantica": "semantic search",
+    # etichette delle schede automatiche (repository_github.VOCABOLARIO)
+    "rimontaggi": "refitting",
+    "analisi spaziale": "spatial analysis",
+    "ceramica": "pottery",
+    "litica": "lithics",
+    "fotogrammetria": "photogrammetry",
+    "ortofoto": "orthophoto",
+    "ricevute": "receipts",
+    "installer": "installer",
 }
 
 

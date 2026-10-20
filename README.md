@@ -27,7 +27,9 @@ pagina > Run workflow*). Da GitHub prende:
 - i contatori dell'apertura: repository pubblici e commit su pyArchInit;
 - lo strato **Ultimi repository**: i repository pubblici toccati negli ultimi
   dodici mesi che non hanno una scheda qui, con nome e descrizione di GitHub
-  (o il primo paragrafo del README). Un repository nuovo compare da solo entro
+  (o il primo paragrafo del README) e le etichette dai topic del repository o,
+  se non ne ha, dalle parole della descrizione (`VOCABOLARIO` in
+  `repository_github.py`, tradotte da `TRADUZIONE_TAG`). Un repository nuovo compare da solo entro
   un'ora; quando gli scrivi la scheda in `progetti.py` esce dalla lista, e per
   non mostrarlo mai lo metti in `ESCLUSI`.
 

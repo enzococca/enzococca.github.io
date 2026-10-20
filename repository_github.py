@@ -17,6 +17,47 @@ API = "https://api.github.com"
 MESI = 12       # un repository entra da solo se è stato toccato negli ultimi dodici mesi
 MASSIMO = 12    # schede automatiche al massimo, dalle più recenti
 
+# Parole che diventano etichette quando compaiono nel nome o nella descrizione di un repository
+# senza topic su GitHub: (espressione, etichetta), dalle più specifiche alle più generiche. Le
+# etichette in italiano le traduce TRADUZIONE_TAG di build.py.
+VOCABOLARIO = [
+    (r"rimontagg|\brefit", "rimontaggi"),
+    (r"analisi spaziale|spatial analys", "analisi spaziale"),
+    (r"ceramic|pottery", "ceramica"),
+    (r"\blitic|lithic", "litica"),
+    (r"stratigraf|matrix di harris|harris matrix", "stratigrafia"),
+    (r"photogrammetr|fotogrammetr", "fotogrammetria"),
+    (r"\bortho|ortofoto", "ortofoto"),
+    (r"\bdem\b|\bdsm\b|elevation|\bquote\b", "DEM"),
+    (r"\blidar\b", "LiDAR"),
+    (r"\bdrone|\bdji\b|\buav\b", "drone"),
+    (r"least.?cost|movecost", "least-cost path"),
+    (r"\bqgis\b", "QGIS"),
+    (r"\bqfield\b", "QField"),
+    (r"\bpostgis\b", "PostGIS"),
+    (r"\bspatialite\b", "SpatiaLite"),
+    (r"\bpyarchinit\b", "pyArchInit"),
+    (r"photo3d", "Photo3D"),
+    (r"\bgeolibre\b", "GeoLibre"),
+    (r"\bmetashape\b", "Metashape"),
+    (r"webodm|\bodm\b", "WebODM"),
+    (r"\bpycharm\b|intellij", "PyCharm"),
+    (r"\bmongodb\b", "MongoDB"),
+    (r"\bkafka\b", "Kafka"),
+    (r"\bocr\b", "OCR"),
+    (r"\bai\b|ai-powered|intelligenza artificiale|\bllm\b|\bgpt\b", "AI"),
+    (r"ricevut|scontrin|receipt", "ricevute"),
+    (r"\bmuse", "museo"),
+    (r"\bexcel\b|\bxlsx\b", "Excel"),
+    (r"\bsql\b|database|banca dati|duckdb", "database"),
+    (r"\bandroid\b|\bapk\b", "Android"),
+    (r"\bios\b|swiftui|iphone|ipad", "iOS"),
+    (r"\bplugin\b", "plugin"),
+    (r"\binstall", "installer"),
+    (r"privacy", "privacy"),
+    (r"\bweb\b|\bhtml\b|browser|\bsito\b|website", "web"),
+]
+
 
 def _chiedi(url, token=None):
     intestazioni = {"Accept": "application/vnd.github+json", "User-Agent": "enzococca.github.io"}
@@ -105,11 +146,27 @@ def automatici(dati, conosciuti, esclusi=(), utente="enzococca", token=None, ogg
             continue
         meta = " · ".join(x for x in (r["linguaggio"], r["licenza"], f"★{r['stelle']}" if r["stelle"] else "") if x)
         schede.append({"nome": r["nome"], "url": r["url"], "privato": False, "meta": meta or r["creato"][:4],
-                       "it": descrizione, "en": descrizione, "tag": r["topics"][:4],
+                       "it": descrizione, "en": descrizione, "tag": etichette(r, descrizione),
                        "extra": ("Sito", "Site", r["sito"]) if r["sito"] else None})
         if len(schede) >= MASSIMO:
             break
     return schede
+
+
+def etichette(r, descrizione):
+    """Le etichette di una scheda automatica: i topic di GitHub se ci sono, altrimenti le parole del
+    VOCABOLARIO che compaiono nel nome o nella descrizione, e il linguaggio se restano poche; al
+    massimo quattro."""
+    if r["topics"]:
+        return r["topics"][:4]
+    testo = f'{r["nome"].replace("-", " ").replace("_", " ")} {descrizione}'.lower()
+    tag = []
+    for espressione, etichetta in VOCABOLARIO:
+        if etichetta not in tag and re.search(espressione, testo):
+            tag.append(etichetta)
+    if len(tag) < 2 and r["linguaggio"] and r["linguaggio"] not in tag:
+        tag.append(r["linguaggio"])
+    return tag[:4]
 
 
 def strato_automatico(schede, num):
