@@ -3,7 +3,7 @@ automatica per ogni repository recente che non ha ancora una scheda scritta a ma
 
 `python3 build.py --github` li scarica (con GITHUB_TOKEN se c'è nell'ambiente, altrimenti senza:
 bastano poche richieste) e li conserva in `repository.json`; `--offline` rilegge quel file.
-L'action `pagina` fa la stessa cosa a ogni push, ogni sei ore e a richiesta: un repository nuovo
+L'action `pagina` fa la stessa cosa a ogni push, ogni ora e a richiesta: un repository nuovo
 compare da solo, con nome e descrizione presi da GitHub, finché non gli scrivi la sua scheda in
 `progetti.py` (allora esce dalla lista automatica) o non lo metti fra gli `ESCLUSI`.
 """

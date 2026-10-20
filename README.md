@@ -20,7 +20,7 @@ anche con JavaScript spento.
 ## Come si aggiorna da sola
 
 L'action `pagina` costruisce la pagina con `python3 build.py --github` e la
-pubblica su GitHub Pages a ogni push, ogni sei ore e a richiesta (*Actions >
+pubblica su GitHub Pages a ogni push, ogni ora e a richiesta (*Actions >
 pagina > Run workflow*). Da GitHub prende:
 
 - le stelle (`★N`) nella riga `meta` delle schede scritte a mano;
@@ -28,7 +28,7 @@ pagina > Run workflow*). Da GitHub prende:
 - lo strato **Ultimi repository**: i repository pubblici toccati negli ultimi
   dodici mesi che non hanno una scheda qui, con nome e descrizione di GitHub
   (o il primo paragrafo del README). Un repository nuovo compare da solo entro
-  sei ore; quando gli scrivi la scheda in `progetti.py` esce dalla lista, e per
+  un'ora; quando gli scrivi la scheda in `progetti.py` esce dalla lista, e per
   non mostrarlo mai lo metti in `ESCLUSI`.
 
 ## Aggiungere o cambiare un progetto

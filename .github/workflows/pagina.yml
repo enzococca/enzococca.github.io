@@ -1,13 +1,13 @@
 name: pagina
 
 # Costruisce la pagina con i dati di GitHub (stelle, contatori, repository recenti) e la pubblica
-# su GitHub Pages: a ogni push, ogni sei ore (così un repository nuovo compare da solo),
-# a richiesta e quando un altro workflow lo chiede con un repository_dispatch "aggiorna".
+# su GitHub Pages: a ogni push, ogni ora (così un repository nuovo compare da solo entro
+# un'ora), a richiesta e quando un altro workflow lo chiede con un repository_dispatch "aggiorna".
 on:
   push:
     branches: [main]
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "17 * * * *"
   workflow_dispatch:
   repository_dispatch:
     types: [aggiorna]
