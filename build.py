@@ -1,17 +1,24 @@
 #!/usr/bin/env python3
 """Costruisce index.html a partire da progetti.py.
 
-    python3 build.py
+    python3 build.py             # solo le schede scritte a mano
+    python3 build.py --github    # più stelle, contatori e repository recenti presi da GitHub
+    python3 build.py --offline   # come --github, ma da repository.json senza scaricare
 
 Il sito è una pagina sola, senza dipendenze: il testo c'è in italiano e in inglese
-e si scambia con il CSS, così funziona anche se JavaScript è spento.
+e si scambia con il CSS, così funziona anche se JavaScript è spento. L'action `pagina`
+lo costruisce con `--github` e lo pubblica: un repository nuovo compare da solo.
 """
 
+import argparse
 import html
+import json
 import math
+import os
 import pathlib
 
-from progetti import STRATI
+import repository_github
+from progetti import ESCLUSI, STRATI
 
 RADICE = pathlib.Path(__file__).parent
 UTENTE = "enzococca"
@@ -544,5 +551,40 @@ def costruisci():
     print(f"index.html scritto — {len(STRATI)} strati, {schede} progetti")
 
 
-if __name__ == "__main__":
+def aggiorna_numeri(dati):
+    """I contatori dell'apertura che GitHub conosce: repository pubblici e commit su pyArchInit."""
+    for i, (v_it, v_en, et_it, et_en) in enumerate(NUMERI):
+        if et_en == "public repositories" and dati.get("repository_pubblici"):
+            n = str(dati["repository_pubblici"])
+            NUMERI[i] = (n, n, et_it, et_en)
+        if et_en == "commits on pyArchInit" and dati.get("commit_pyarchinit"):
+            n = dati["commit_pyarchinit"]
+            NUMERI[i] = (f"{n:,}".replace(",", "."), f"{n:,}", et_it, et_en)
+
+
+def main(argv=None):
+    p = argparse.ArgumentParser(description="Costruisce index.html da progetti.py.")
+    p.add_argument("--github", action="store_true",
+                   help="scarica da GitHub stelle, contatori e repository recenti (GITHUB_TOKEN se c'è) e li salva in repository.json")
+    p.add_argument("--offline", action="store_true", help="usa repository.json senza scaricare")
+    a = p.parse_args(argv)
+    cache = RADICE / "repository.json"
+    token = os.environ.get("GITHUB_TOKEN") or None
+    dati = None
+    if a.github:
+        dati = repository_github.scarica(UTENTE, token)
+        cache.write_text(json.dumps(dati, ensure_ascii=False, indent=1), encoding="utf-8")
+    elif a.offline and cache.exists():
+        dati = json.loads(cache.read_text(encoding="utf-8"))
+    if dati:
+        repository_github.aggiorna_stelle(STRATI, dati)
+        conosciuti = [q["url"] for s in STRATI for q in s["progetti"]]
+        schede = repository_github.automatici(dati, conosciuti, ESCLUSI, UTENTE, token if a.github else None)
+        if schede:
+            STRATI.append(repository_github.strato_automatico(schede, f"{len(STRATI) + 1:02d}"))
+        aggiorna_numeri(dati)
     costruisci()
+
+
+if __name__ == "__main__":
+    main()

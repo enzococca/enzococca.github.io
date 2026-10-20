@@ -1,3 +1,6 @@
 __pycache__/
 *.pyc
 .DS_Store
+# generati da build.py (la pagina la pubblica l'action)
+index.html
+repository.json

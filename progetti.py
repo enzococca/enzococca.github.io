@@ -12,7 +12,19 @@ Campi:
   it / en   due o tre righe che spiegano a cosa serve
   tag       parole chiave (non tradotte)
   extra     link secondario (etichetta_it, etichetta_en, url) oppure None
+
+I repository che non sono qui compaiono da soli nello strato "Ultimi repository" (build.py
+--github, e l'action a ogni push e ogni sei ore) se sono stati toccati negli ultimi dodici
+mesi e hanno una descrizione o un README; per tenerne fuori uno, mettilo in ESCLUSI.
 """
+
+# repository pubblici da non mostrare mai fra gli automatici (vecchie copie, prove, modelli)
+ESCLUSI = {
+    "pyarchinit", "pyarchinit_2x", "pyarchinit_3-master", "pyarchinit_enzo-master2", "pyarchinit_nightly",
+    "pyarchinit_python2", "pyarchinit-master", "pyarchinit-python-2x", "pyarchinit-test", "pyarchinitdel",
+    "HFF_da-buttare", "pythonProject", "react-postgres-fullstack-template",
+    "Course_DATABASE2025_", "Course_DATABASE2025_2",
+}
 
 STRATI = [
     {

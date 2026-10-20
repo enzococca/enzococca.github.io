@@ -5,22 +5,39 @@ Sta online su <https://enzococca.github.io>.
 
 ## Com'è fatta
 
-Una pagina sola, senza framework e senza passaggi di compilazione in rete.
-I due testi convivono nell'HTML e il CSS ne nasconde uno: la lingua si cambia
-senza ricaricare, e la pagina resta leggibile anche con JavaScript spento.
+Una pagina sola, senza framework. I due testi convivono nell'HTML e il CSS ne
+nasconde uno: la lingua si cambia senza ricaricare, e la pagina resta leggibile
+anche con JavaScript spento.
 
 | File | A cosa serve |
 |---|---|
-| `progetti.py` | I contenuti: un blocco per ogni progetto, con il testo nelle due lingue |
+| `progetti.py` | I contenuti: un blocco per ogni progetto, con il testo nelle due lingue, e gli `ESCLUSI` |
 | `build.py` | Il modello: HTML, CSS e la manciata di righe di JavaScript |
-| `index.html` | Il risultato — **generato, non si modifica a mano** |
+| `repository_github.py` | Quello che arriva da GitHub: stelle, contatori e i repository recenti senza scheda |
+| `.github/workflows/pagina.yml` | L'action che costruisce la pagina e la pubblica |
+| `index.html` | Il risultato — **generato, non si committa** (lo fa l'action) |
+
+## Come si aggiorna da sola
+
+L'action `pagina` costruisce la pagina con `python3 build.py --github` e la
+pubblica su GitHub Pages a ogni push, ogni sei ore e a richiesta (*Actions >
+pagina > Run workflow*). Da GitHub prende:
+
+- le stelle (`★N`) nella riga `meta` delle schede scritte a mano;
+- i contatori dell'apertura: repository pubblici e commit su pyArchInit;
+- lo strato **Ultimi repository**: i repository pubblici toccati negli ultimi
+  dodici mesi che non hanno una scheda qui, con nome e descrizione di GitHub
+  (o il primo paragrafo del README). Un repository nuovo compare da solo entro
+  sei ore; quando gli scrivi la scheda in `progetti.py` esce dalla lista, e per
+  non mostrarlo mai lo metti in `ESCLUSI`.
 
 ## Aggiungere o cambiare un progetto
 
 1. apri `progetti.py`, copia un blocco esistente e cambia i campi
    (`nome`, `url`, `privato`, `meta`, `it`, `en`, `tag`, `extra`);
-2. `python3 build.py`
-3. committa `progetti.py` **e** `index.html`.
+2. `python3 build.py` per guardare il risultato (`--github` per vederlo con i
+   dati di GitHub, `--offline` per riusare `repository.json` senza scaricare);
+3. committa `progetti.py`: l'action ricostruisce e pubblica la pagina.
 
 Per un progetto privato metti `"url": None` e `"privato": True`: compare la
 scheda con il badge *Privato / Private* e nessun collegamento al codice.

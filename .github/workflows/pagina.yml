@@ -1,0 +1,46 @@
+name: pagina
+
+# Costruisce la pagina con i dati di GitHub (stelle, contatori, repository recenti) e la pubblica
+# su GitHub Pages: a ogni push, ogni sei ore (così un repository nuovo compare da solo),
+# a richiesta e quando un altro workflow lo chiede con un repository_dispatch "aggiorna".
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+  repository_dispatch:
+    types: [aggiorna]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pagina
+  cancel-in-progress: true
+
+jobs:
+  costruisci:
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.pubblica.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Pagina con i dati di GitHub
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python3 build.py --github
+          mkdir -p _sito && cp index.html _sito/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _sito
+      - id: pubblica
+        uses: actions/deploy-pages@v4
